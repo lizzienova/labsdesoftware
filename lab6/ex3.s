@@ -16,16 +16,15 @@ main:
 /********************************************************/
 
 
-movl  $0, %ebx  /* ebx = 0; */
+movl  $0, %ebx  /* i = 0; */
 movq  $nums, %r12  /* r12 = &nums */
 
 L1:
-  cmpl $4, %ebx /* if(i==4)
+  cmpl $4, %ebx /* if(i==4) */
   je L3
-  movl  $1, %r13d 
-  movl (%r12), %eax
-  andl %r13d, %eax
-  cmpl $0, %eax
+  movl  $0x01, %r13d
+  andl (%r12),%r13d
+  cmpl $0,%r13d
   je L2
   addl $1, %ebx          # i++
   addq $4, %r12          # p++
@@ -33,6 +32,7 @@ L1:
 
 
 L2:
+movl (%r12),%eax
 /*************************************************************/
 /* este trecho imprime o valor de %eax (estraga %eax)  */
   movq    $Sf, %rdi    /* primeiro parametro (ponteiro)*/

@@ -15,22 +15,25 @@ main:
 /********************************************************/
 
 
-movl $1, %ecx
+movl $1, %ebx
 
 inicio:
-movl %ecx, %eax
-imull %ecx, %eax
+movl %ebx, %eax
+imull %ebx, %eax
+
 /*************************************************************/
 /* este trecho imprime o valor de %eax (estraga %eax)  */
   movq    $Sf, %rdi    /* primeiro parametro (ponteiro)*/
   movl    %eax, %esi   /* segundo parametro  (inteiro) */
   call  printf       /* chama a funcao da biblioteca */
 /*************************************************************/
-addl $1, %ecx
-cmpl $11, %ecx
-jl inicio
+
+addl $1, %ebx
+cmpl $10, %ebx
+jle inicio
 
 fim:
+
 /***************************************************************/
 /* mantenha este trecho aqui e nao mexa - finalizacao!!!!      */
   movq  $0, %rax  /* rax = 0  (valor de retorno) */

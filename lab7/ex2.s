@@ -1,32 +1,29 @@
-/* #include <stdio.h>
+/*
+#include <stdio.h>
 
-int nums[4] = {65, -105, 111, 34};
+char S2[] = {65, 108, 111, 32, 123, 103, 97, 108, 101, 114, 97, 125, 33, 0};
 
 int main (void) {
-  int i=0;
-  int s = 0;
-  int indice=0;
-
-  while(i!=4){
-  indice= i*4;
-  int *temp=nums;
-  temp+=indice;
-  soma+=*temp;
-  i++;
-}
-  printf ("soma = %d\n", s);
-
+  char *pc = S2;
+  while (*pc){
+    if (*pc!=123 && *pc!= 125)
+    {
+        printf ("%c", *pc);
+    }
+    pc++;
+  }
+  printf("\n");
   return 0;
 }
 
 */
 
 .data
-nums:  .int  65, -105, 111, 34
-Sf:  .string "%d\n"    # string de formato para printf
+nums: .byte 65, 108, 111, 32, 123, 103, 97, 108, 101, 114, 97, 125, 33, 0
+Sf: .string "%c"
 
 .text
-.globl  main
+.globl main
 
 main:
 
@@ -39,22 +36,16 @@ main:
   movq    %r12, -16(%rbp)
 /********************************************************/
 
-movq $0, %rbx /* i=0 */
-movl $0, %r12d /* soma=0 */
+movq $nums, %rbx    /* *pc=nums */
 
-inicio: 
-cmpq $4, %rbx /* if(i==4) */
-jge L1
-movq %rbx, %r13 /* colocando i dentro de indice */
-imulq $4, %r13
-movq $nums, %r14 /* temp */
-addq %r13, %r14
-addl (%r14), %r12d /* soma+=temp */
-addq $1, %rbx /* i++ */
-jmp inicio
-
-L1:
-movl %r12d, %eax
+inicio:
+cmpb $0, (%rbx)     /* if(*pc==0)  */
+je L2
+cmpb $123, (%rbx) /* if (*pc==123) */
+je L1
+cmpb $125, (%rbx)
+je L1
+movl (%rbx), %eax
 /*************************************************************/
 /* este trecho imprime o valor de %eax (estraga %eax)  */
   movq    $Sf, %rdi    /* primeiro parametro (ponteiro)*/
@@ -62,6 +53,11 @@ movl %r12d, %eax
   call  printf       /* chama a funcao da biblioteca */
 /*************************************************************/
 
+L1:
+addq $1, %rbx
+jmp inicio
+
+L2:
 /***************************************************************/
 /* mantenha este trecho aqui e nao mexa - finalizacao!!!!      */
   movq  $0, %rax  /* rax = 0  (valor de retorno) */

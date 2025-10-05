@@ -66,6 +66,31 @@ void big_shl(BigInt res, BigInt a, int n)
     }
 }
 
+void big_shr(BigInt res, BigInt a, int n)
+{
+    int n_qtbytes=n/8; // quantos bytes temos que deslocar
+    int n_qtbits=n%8; //quantos bits restantes temos que deslocar 
+    //inicializar com 0
+    for(int i=0; i<16; i++)
+    {
+        res[i]=0;
+    }
+    for (int i=0; i<16-n_qtbytes; i++)
+    {
+        res[i]=a[i+n_qtbytes];
+    }
+    if (n_qtbits>0)
+    {
+        unsigned char bitsresto=0;
+        for (int i=15; i>=0; i--)
+        {
+            unsigned char temporario=res[i];
+            res[i]=(temporario>>n_qtbits) | bitsresto; //desloca p direita "n" bits e "junta" os bits q "vazaram" do outro byte anterior
+            bitsresto=temporario<<(8-n_qtbits); //movimentação p posição certa
+        }
+    }
+}
+
 void print_bigint(BigInt a) {
     printf("{");
     for (int i = 0; i < 16; i++) {

@@ -45,10 +45,26 @@ int main() {
     printf("\n");
 
     big_val(a,127);
-    big_shl(res,a,127);
+    big_shl(res,a,7);
     printf("a = ");
     print_bigint(a);
     printf("a << %d = ", 127);
+    print_bigint(res);
+    printf("\n");
+
+    big_val(a,-1);
+    big_shl(res,a,1);
+    printf("a = ");
+    print_bigint(a);
+    printf("a << %d = ", 1);
+    print_bigint(res);
+    printf("\n");
+
+    big_val(a,-128);
+    big_shl(res,a,8);
+    printf("a = ");
+    print_bigint(a);
+    printf("a << %d = ", -128);
     print_bigint(res);
     printf("\n");
 

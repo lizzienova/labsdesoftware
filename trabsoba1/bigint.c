@@ -11,6 +11,7 @@ typedef unsigned char BigInt[NUM_BITS/8];
 
 void big_val (BigInt res, long val)
 {
+    unsigned long uval=(unsigned long) val;
     unsigned char extende;
     if (val<0)
     {
@@ -19,13 +20,13 @@ void big_val (BigInt res, long val)
     else{
         extende=0x00;
     }
-    for(int i=0; i<16; i++)
+    for(int i=0; i<sizeof(long); i++)
     {
-        res[i]=extende; //zera o vetor
+        res[i]=(uval>>(8*i))& 0xFF;
     }
-    for(int i=0; i<8; i++)
+    for (int i=sizeof(long); i<16; i++)
     {
-        res[i]=(val>>(8*i)) & 0xFF;
+        res[i]=extende;
     }
 }
 
@@ -35,10 +36,19 @@ void big_shl(BigInt res, BigInt a, int n)
 {
     int n_qtbytes=n/8; // quantos bytes temos que deslocar
     int n_qtbits=n%8; //quantos bits restantes temos que deslocar 
+    unsigned char sinal;
+    if(a[15] & 0x80)
+    {
+        sinal=0xFF; //negativo
+    }
+    else
+    {
+        sinal=0x00; //positivo
+    }
     //pra zerar tudo
     for (int i=0; i<16; i++)
     {
-        res[i]=0;
+        res[i]=sinal;
     }
     for (int i=15; i>=n_qtbytes; i--) //enquanto i for maior ou igual a quantidade de bytes
     {

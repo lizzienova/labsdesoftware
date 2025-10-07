@@ -1,5 +1,11 @@
+/* Nome: Rafaela Bessa || Matrícula: 2420043 || Turma: 33A */
+/* Nome: Lis Almeida || Matrícula: xxxx || Turma: 33A */
 #include <stdio.h>
 #include "bigint.h"
+
+//prototipo da funcao para printar 
+void print_bigint(BigInt a)
+
 int main() {
     BigInt a, b, res;
 

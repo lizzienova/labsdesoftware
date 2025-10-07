@@ -1,25 +1,73 @@
 #include <stdio.h>
 #include "bigint.h"
-
 int main() {
-    BigInt a, res;
-/*
+    BigInt a, b, res;
+
+    printf("===== TESTES DE SOMA =====\n");
+    big_val(a, 5);
+    big_val(b, 10);
+    big_sum(res, a, b);
+    printf("5 + 10 = ");
+    print_bigint(res);
+    printf("\n");
+
     big_val(a, -1);
-    printf("-1: \n");
-    print_bigint(a);
+    big_val(b, 1);
+    big_sum(res, a, b);
+    printf("-1 + 1 = ");
+    print_bigint(res);
     printf("\n");
 
-    big_val(a, 0);
-    printf("0: \n");
-    print_bigint(a);
+    printf("===== TESTES DE SUBTRACAO =====\n");
+    big_val(a, 20);
+    big_val(b, 5);
+    big_sub(res, a, b);
+    printf("20 - 5 = ");
+    print_bigint(res);
     printf("\n");
 
-    big_val(a, 0x123456789ABCDEF);
-    printf("0x123456789ABCDEF: \n");
-    print_bigint(a);
+    big_val(a, 5);
+    big_val(b, 10);
+    big_sub(res, a, b);
+    printf("5 - 10 = ");
+    print_bigint(res);
     printf("\n");
-    */
 
+    printf("===== TESTES DE MULTIPLICACAO =====\n");
+    big_val(a, 3);
+    big_val(b, 4);
+    big_mul(res, a, b);
+    printf("3 * 4 = ");
+    print_bigint(res);
+    printf("\n");
+
+    big_val(a, -2);
+    big_val(b, 3);
+    big_mul(res, a, b);
+    printf("-2 * 3 = ");
+    print_bigint(res);
+    printf("\n");
+
+    printf("===== TESTES DE SHIFT ARITMETICO DIREITA =====\n");
+    big_val(a, -2);
+    big_sar(res, a, 1);
+    printf("-2 >> 1 = ");
+    print_bigint(res);
+    printf("\n");
+
+    big_val(a, -128);
+    big_sar(res, a, 8);
+    printf("-128 >> 8 = ");
+    print_bigint(res);
+    printf("\n");
+
+    big_val(a, 128);
+    big_sar(res, a, 4);
+    printf("128 >> 4 = ");
+    print_bigint(res);
+    printf("\n");
+
+    printf("===== TESTES DE SHIFT ESQUERDA =====\n");
     big_val(a,1);
     big_shl(res,a,1);
     printf("a = ");
@@ -48,7 +96,7 @@ int main() {
     big_shl(res,a,7);
     printf("a = ");
     print_bigint(a);
-    printf("a << %d = ", 127);
+    printf("a << %d = ", 7);
     print_bigint(res);
     printf("\n");
 
@@ -64,7 +112,7 @@ int main() {
     big_shl(res,a,8);
     printf("a = ");
     print_bigint(a);
-    printf("a << %d = ", -128);
+    printf("a << %d = ", 8);
     print_bigint(res);
     printf("\n");
 

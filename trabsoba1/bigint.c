@@ -34,11 +34,11 @@ void big_val (BigInt res, long val)
     else{
         extende=0x00;
     }
-    for(int i=0; i<sizeof(long); i++)
+    for(int i=0; i<sizeof(long) && i < NUM_BYTES; i++)
     {
         res[i]=(uval>>(8*i))& 0xFF;
     }
-    for (int i=sizeof(long); i<16; i++)
+    for (int i=sizeof(long); i<NUM_BYTES; i++)
     {
         res[i]=extende;
     }
@@ -46,6 +46,28 @@ void big_val (BigInt res, long val)
 
 
 /* Operações Aritméticas */
+
+/* res = -a*/
+
+void big_comp2(BigInt res, BigInt a)
+{
+    for (int i=0; i<(NUM_BITS/8); i++)
+    {
+        res[i]=a[i];
+    }
+    for (int i=0; i<(NUM_BITS/8); i++)
+    {
+        res[i]=~res[i];
+    }
+    unsigned char vai_um=1;
+    for (int i=0; i<(NUM_BITS/8); i++)
+    {
+        unsigned short soma=res[i]+vai_um;
+        res[i]=soma & 0xFF;
+        vai_um=(soma>>8)&0x01;
+        if(!vai_um) break;
+    }
+}
 
 
 /* res = a + b */

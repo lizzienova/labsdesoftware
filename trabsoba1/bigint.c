@@ -3,12 +3,26 @@
 
 #include "bigint.h"
 #include <stdio.h>
+#include <string.h>
 #define NUM_BITS 128
+#define NUM_BYTES (NUM_BITS/8)
 typedef unsigned char BigInt[NUM_BITS/8];
 
 // se val for negativo, preencher os bytes restantes com 0xFF
 // se val for positiivo, preencher os bytes restantes com 0x00
 
+//printa no modelo do enunciado {0x01, 0x00...}
+void print_bigint(BigInt a) {
+    printf("{");
+    for (int i = 0; i < 16; i++) {
+        printf("0x%02X", a[i]);
+        if (i < 15) printf(", ");
+    }
+    printf("}\n");
+}
+
+
+/* Atribuição (com extensão) */
 void big_val (BigInt res, long val)
 {
     unsigned long uval=(unsigned long) val;
@@ -29,6 +43,58 @@ void big_val (BigInt res, long val)
         res[i]=extende;
     }
 }
+
+
+/* Operações Aritméticas */
+
+
+/* res = a + b */
+void big_sum(BigInt res, BigInt a, BigInt b) {
+    unsigned int vai_um = 0;
+    for (int i = 0; i < NUM_BYTES; i++) {
+        unsigned int soma = a[i] + b[i] + vai_um;
+        res[i] = (unsigned char)(soma & 0xFF);
+        vai_um = soma >> 8;
+    }
+}
+
+/* res = a - b */
+void big_sub(BigInt res, BigInt a, BigInt b) {
+    int emprestimo = 0;
+    for (int i = 0; i < NUM_BYTES; i++) {
+        int diferenca = (int)a[i] - (int)b[i] - emprestimo;
+        if (diferenca < 0) {
+            diferenca += 256;
+            emprestimo = 1;
+        } else {
+            emprestimo = 0;
+        }
+        res[i] = (unsigned char)(diferenca & 0xFF);
+    }
+}
+
+/* res = a * b */
+void big_mul(BigInt res, BigInt a, BigInt b) {
+    unsigned short temporario[NUM_BYTES * 2] = {0};
+
+    for (int i = 0; i < NUM_BYTES; i++) {
+        unsigned int vai_um = 0;
+        for (int j = 0; j < NUM_BYTES; j++) {
+            unsigned int pos = i + j;
+            unsigned int multiplicacao = temporario[pos] + a[i] * b[j] + vai_um;
+            temporario[pos] = multiplicacao & 0xFF;
+            vai_um = multiplicacao >> 8;
+        }
+        temporario[i + NUM_BYTES] = vai_um;
+    }
+
+    for (int i = 0; i < NUM_BYTES; i++) {
+        res[i] = (unsigned char)temporario[i];
+    }
+}
+
+
+/* Operações de Deslocamento */
 
 void big_shl(BigInt res, BigInt a, int n)
 // deve deslocar o valor de a para a esquerda n bits (n entre 0 e 127)
@@ -90,16 +156,3 @@ void big_shr(BigInt res, BigInt a, int n)
         }
     }
 }
-
-void print_bigint(BigInt a) {
-    printf("{");
-    for (int i = 0; i < 16; i++) {
-        printf("0x%02X,", a[i]);
-        if (i < 15) printf(" ");
-    }
-    printf("}");
-    printf("\n");
-}
-
-
-

@@ -29,16 +29,16 @@ void big_val (BigInt res, long val)
     unsigned char extende;
     if (val<0)
     {
-        extende=0xFF;
+        extende=0xFF; //preenche com 0xFF se o valor for negativo
     }
     else{
-        extende=0x00;
+        extende=0x00; //preenche com 0x00 se o valor for positivo
     }
-    for(int i=0; i<sizeof(long) && i < NUM_BYTES; i++)
+    for(int i=0; i<sizeof(long) && i < NUM_BYTES; i++) //faz a copia dos primerios bytes de val para os primeiros bytes do bigint (little endian)
     {
-        res[i]=(uval>>(8*i))& 0xFF;
+        res[i]=(uval>>(8*i))& 0xFF; //cada byte individualmente
     }
-    for (int i=sizeof(long); i<NUM_BYTES; i++)
+    for (int i=sizeof(long); i<NUM_BYTES; i++) //preenche os bytes restantes
     {
         res[i]=extende;
     }
@@ -51,21 +51,22 @@ void big_val (BigInt res, long val)
 
 void big_comp2(BigInt res, BigInt a)
 {
+    //copia a para res
     for (int i=0; i<(NUM_BITS/8); i++)
     {
         res[i]=a[i];
     }
-    for (int i=0; i<(NUM_BITS/8); i++)
+    for (int i=0; i<(NUM_BITS/8); i++) //inverte todos os bits que colocamos em res
     {
         res[i]=~res[i];
     }
     unsigned char vai_um=1;
-    for (int i=0; i<(NUM_BITS/8); i++)
+    for (int i=0; i<(NUM_BITS/8); i++) //soma 1 ao número invertido
     {
-        unsigned short soma=res[i]+vai_um;
-        res[i]=soma & 0xFF;
-        vai_um=(soma>>8)&0x01;
-        if(!vai_um) break;
+        unsigned short soma=res[i]+vai_um; //soma com meu "vai_um" que é 1
+        res[i]=soma & 0xFF; //armazena o byte resultante
+        vai_um=(soma>>8)&0x01; //atualiza meu "vai_um"
+        if(!vai_um) break; //se não tiver mais resto, para
     }
 }
 
@@ -159,11 +160,11 @@ void big_shr(BigInt res, BigInt a, int n)
     int n_qtbytes=n/8; // quantos bytes temos que deslocar
     int n_qtbits=n%8; //quantos bits restantes temos que deslocar 
     //inicializar com 0
-    for(int i=0; i<16; i++)
+    for(int i=0; i<16; i++) //incializa onde colocaremos nosso valor com 0s
     {
         res[i]=0;
     }
-    for (int i=0; i<16-n_qtbytes; i++)
+    for (int i=0; i<16-n_qtbytes; i++) //desloca os bytes, copiando os que "restam" depois do deslocamento 
     {
         res[i]=a[i+n_qtbytes];
     }

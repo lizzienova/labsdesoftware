@@ -46,8 +46,8 @@ int testa_certo(BigInt obtido, BigInt esperado, const char *nome_funcao, int num
             if (erro == 0) {
                  printf("\n--- FALHA DETECTADA ---\n");
                  printf("Erro em %s, Teste %d\n", nome_funcao, num_teste);
-                 printf("Obtido:    "); print_bigint(obtido); printf("\n");
-                 printf("Esperado:  "); print_bigint(esperado); printf("\n");
+                 printf("Obtido:"); print_bigint(obtido); printf("\n");
+                 printf("Esperado: "); print_bigint(esperado); printf("\n");
             }
             erro = 1;
             break; // já detectamos a falha, não precisa de mais bytes
@@ -358,7 +358,7 @@ int main() {
     printf("TESTE big_sar: %s\n", (falhas == 0) ? "PASSOU" : "FALHOU");
     
     printf("\n========================================\n");
-    printf("  RESULTADO FINAL: %d falhas em %d testes. \n", falhas, total_testes);
+    printf(" RESULTADO FINAL: %d falhas em %d testes. \n", falhas, total_testes);
     printf("========================================\n");
     
     return (falhas != 0); // Retorna código de erro 1 se houver falhas

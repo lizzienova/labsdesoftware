@@ -1,5 +1,5 @@
 /* Nome: Rafaela Bessa || Matrícula: 2420043 || Turma: 33A */
-/* Nome: Lis Almeida || Matrícula: xxxx || Turma: 33A */
+/* Nome: Lis Almeida || Matrícula: 2421294 || Turma: 33A */
 #include <stdio.h>
 #include "bigint.h"
 
@@ -34,13 +34,54 @@ int main() {
     printf("Valor -1: ");
     print_bigint(a);
     printf("\n");
-    big_val(a, 2147483647L); // MAX_INT (Exemplo de long)
+    big_val(a, 2147483647L); // MAX_INT (exemplo de um long)
     printf("Valor MAX_INT (2^31-1): ");
     print_bigint(a);
     printf("\n\n");
+    big_val(a, 0);
+    printf("Valor 0: ");
+    print_bigint(a);
+    printf("\n");
 
     // -------------------------------------------------------------
-    
+
+    printf("======================================\n");
+    printf("    TESTES DE COMPLEMENTO DE DOIS (big_comp2) \n");
+    printf("======================================\n");
+
+    big_val(a,1);
+    big_comp2(res,a);
+    printf("Complemento de 2 de (+1): ");
+    print_bigint(res);
+    printf("  (Esperado: -1 -> todos os bytes 0xFF)\n\n");
+
+    big_val(a, 0);
+    big_comp2(res, a);
+    printf("Complemento de 2 de (0): ");
+    print_bigint(res);
+    printf("  (Esperado: 0 -> todos os bytes 0x00)\n\n");
+
+    big_val(a, -1);
+    big_comp2(res, a);
+    printf("Complemento de 2 de (-1): ");
+    print_bigint(res);
+    printf("  (Esperado: +1 -> byte menos significativo = 0x01)\n\n");
+
+    big_val(a, 127);
+    big_comp2(res, a);
+    printf("Complemento de 2 de (+127): ");
+    print_bigint(res);
+    printf("  (Esperado: -127 -> representação negativa em complemento de dois)\n\n");
+
+    big_val(a, -128);
+    big_comp2(res, a);
+    printf("Complemento de 2 de (-128): ");
+    print_bigint(res);
+    printf("  (Esperado: +128 -> byte menos significativo 0x80, resto 0x00)\n\n");
+
+
+    // -------------------------------------------------------------
+
     printf("================================\n");
     printf("     TESTES DE SOMA (big_sum) \n");
     printf("================================\n");

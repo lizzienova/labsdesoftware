@@ -24,7 +24,7 @@ int main() {
     int n; 
 
     printf("======================================\n");
-    printf("====== TESTES DE ATRIBUICAO (big_val) ======\n");
+    printf("    TESTES DE ATRIBUICAO (big_val) \n");
     printf("======================================\n");
     big_val(a, 1);
     printf("Valor 1: ");
@@ -42,7 +42,7 @@ int main() {
     // -------------------------------------------------------------
     
     printf("================================\n");
-    printf("====== TESTES DE SOMA (big_sum) ======\n");
+    printf("     TESTES DE SOMA (big_sum) \n");
     printf("================================\n");
     
     big_val(a, 5);
@@ -69,7 +69,7 @@ int main() {
     // -------------------------------------------------------------
 
     printf("===================================\n");
-    printf("====== TESTES DE SUBTRACAO (big_sub) ======\n");
+    printf("     TESTES DE SUBTRACAO (big_sub) \n");
     printf("===================================\n");
     
     big_val(a, 20);
@@ -96,7 +96,7 @@ int main() {
     // -------------------------------------------------------------
 
     printf("======================================\n");
-    printf("====== TESTES DE MULTIPLICACAO (big_mul) ======\n");
+    printf("     TESTES DE MULTIPLICACAO (big_mul) \n");
     printf("======================================\n");
     
     big_val(a, 3);
@@ -123,7 +123,7 @@ int main() {
     // -------------------------------------------------------------
 
     printf("==================================================\n");
-    printf("====== TESTES DE SHIFT ARITMETICO DIREITA (big_sar) ======\n");
+    printf("    TESTES DE SHIFT ARITMETICO DIREITA (big_sar) \n");
     printf("==================================================\n");
     
     big_val(a, -2);
@@ -150,7 +150,7 @@ int main() {
     // -------------------------------------------------------------
     
     printf("==========================================\n");
-    printf("====== TESTES DE SHIFT ESQUERDA (big_shl) ======\n");
+    printf("     TESTES DE SHIFT ESQUERDA (big_shl) \n");
     printf("==========================================\n");
 
     big_val(a, 1);
@@ -184,7 +184,7 @@ int main() {
     // -------------------------------------------------------------
     
     printf("==============================================\n");
-    printf("====== TESTES DE SHIFT LOGICO DIREITA (big_shr) ======\n");
+    printf("     TESTES DE SHIFT LOGICO DIREITA (big_shr) \n");
     printf("==============================================\n");
 
     big_val(a, -1); // -1 é 0xFF...FF

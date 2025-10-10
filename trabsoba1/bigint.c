@@ -1,5 +1,5 @@
 /* Nome: Rafaela Bessa || Matrícula: 2420043 || Turma: 33A */
-/* Nome: Lis Almeida || Matrícula: xxxx || Turma: 33A */
+/* Nome: Lis Almeida || Matrícula: 2421294 || Turma: 33A */
 
 #include "bigint.h"
 #include <stdio.h> 
@@ -247,11 +247,10 @@ void big_sar(BigInt res, BigInt a, int n)
     int n_qtbytes = n / 8;
     int n_qtbits  = n % 8;
 
-    /* Define o valor de preenchimento (extensão de sinal) */
+    /* Define o valor que quero preencher (extensão de sinal) */
     unsigned char preenchimento_sinal = (a[NUM_BYTES - 1] & 0x80) ? 0xFF : 0x00;
 
-    /* 1) Deslocamento por bytes */
-    // Copia os bytes de 'a' para 'res' (deslocamento de bytes).
+    // Copia os bytes de 'a' pra 'res' (deslocamento de bytes).
     for (int i = 0; i < NUM_BYTES - n_qtbytes; i++) {
         res[i] = a[i + n_qtbytes];
     }
@@ -260,15 +259,15 @@ void big_sar(BigInt res, BigInt a, int n)
         res[i] = preenchimento_sinal;
     }
 
-    /* 2) Deslocamento por bits (propagação de "vai-um" com preenchimento de sinal) */
+    /* Deslocamento por BITS (com preenchimento de sinal) */
     if (n_qtbits > 0) {
-        // Carry inicial: bit de sinal deslocado para ser inserido no byte mais significativo.
+        // Carry inicial: bit de sinal deslocado a ser inserido no byte MAIS significativo.
         unsigned char carry = (preenchimento_sinal << (8 - n_qtbits)); 
         
         for (int i = NUM_BYTES - 1; i >= 0; i--) {
-            // Bits que "vazam" para o byte anterior (o novo carry)
+            // Bits que "restam" para o byte anterior (novo carry)
             unsigned char proximo_carry = (unsigned char)(res[i] << (8 - n_qtbits));
-            // Shift do byte atual + bits do byte posterior (carry/preenchimento)
+            // Shift do byte atual + bits do byte que vem depois (carry/preenchimento)
             res[i] = (unsigned char)((res[i] >> n_qtbits) | carry);
             carry = proximo_carry;
         }

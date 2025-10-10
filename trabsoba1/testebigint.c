@@ -16,12 +16,12 @@ void print_bigint(BigInt a) {
         printf("0x%02X", a[i]);
         if (i < NUM_BYTES - 1) printf(", ");
     }
-    printf("}"); // Removido o '\n' para dar mais controle ao printf da main
+    printf("}"); // Mantém o controle do newline na função chamadora
 }
 
 int main() {
     BigInt a, b, res;
-    int n; // Variável para shifts
+    int n; 
 
     printf("======================================\n");
     printf("====== TESTES DE ATRIBUICAO (big_val) ======\n");
@@ -194,12 +194,12 @@ int main() {
     print_bigint(res);
     printf(" (Esperado: 0x7FFF...FF)\n");
     
-    big_val(a, -256); // 0x00, 0xFF, 0xFF...FF
+    big_val(a, -256); 
     n = 8;
     big_shr(res, a, n);
     printf("2. (-256 >> %d) Logico = ", n);
     print_bigint(res);
-    printf(" (Esperado: 0xFF, 0x00, 0xFF...FF)\n\n");
+    printf(" (Esperado: 15 bytes FF, 1 byte 00 no MSB)\n\n");
 
     return 0;
 }

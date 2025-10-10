@@ -2,179 +2,278 @@
 /* Nome: Lis Almeida || Matrícula: xxxx || Turma: 33A */
 
 #include "bigint.h"
-#include <stdio.h>
-#include <string.h>
-#define NUM_BITS 128
+#include <stdio.h> // Mantido para 'printf'
+
 #define NUM_BYTES (NUM_BITS/8)
-typedef unsigned char BigInt[NUM_BITS/8];
-
-// se val for negativo, preencher os bytes restantes com 0xFF
-// se val for positiivo, preencher os bytes restantes com 0x00
-
-//printa no modelo do enunciado {0x01, 0x00...}
-void print_bigint(BigInt a) {
-    printf("{");
-    for (int i = 0; i < 16; i++) {
-        printf("0x%02X", a[i]);
-        if (i < 15) printf(", ");
-    }
-    printf("}\n");
-}
 
 
-/* Atribuição (com extensão) */
+/**
+*@brief Atribui um valor 'long' (64 bits assinado) a um BigInt de 128 bits.
+* Realiza a extensão de sinal apropriada (res = val).
+*@param res: O BigInt de destino (128 bits).
+*@param val: O valor 'long' de 64 bits a ser atribuído.
+**/
 void big_val (BigInt res, long val)
 {
-    unsigned long uval=(unsigned long) val;
-    unsigned char extende;
-    if (val<0)
-    {
-        extende=0xFF;
+    unsigned long uvalor = (unsigned long) val;
+    // Define o byte de extensão: 0xFF para valor negativo (bit de sinal 1), 0x00 para positivo (bit de sinal 0).
+    unsigned char byte_extensao = (val < 0) ? 0xFF : 0x00;
+
+    int n = sizeof(long);
+    if (n > NUM_BYTES) n = NUM_BYTES;
+
+    // 1. Copia os bytes do long (little-endian: byte menos significativo em res[0]).
+    for (int i = 0; i < n; i++) {
+        // Isola o byte e o armazena em res[i].
+        res[i] = (uvalor >> (8 * i)) & 0xFF;
     }
-    else{
-        extende=0x00;
-    }
-    for(int i=0; i<sizeof(long) && i < NUM_BYTES; i++)
-    {
-        res[i]=(uval>>(8*i))& 0xFF;
-    }
-    for (int i=sizeof(long); i<NUM_BYTES; i++)
-    {
-        res[i]=extende;
+    // 2. Extensão de sinal: preenche os bytes restantes com o byte de extensão.
+    for (int i = n; i < NUM_BYTES; i++) {
+        res[i] = byte_extensao;
     }
 }
 
-
-/* Operações Aritméticas */
-
-/* res = -a*/
-
+/**
+*@brief Calcula o Complemento a 2 do operando 'a' (negação). res = -a.
+* Implementado como: Inverter bits (Complemento a 1) e somar 1.
+*@param res: O BigInt de destino (resultado).
+*@param a: O BigInt de origem (operando).
+**/
 void big_comp2(BigInt res, BigInt a)
 {
-    for (int i=0; i<(NUM_BITS/8); i++)
-    {
-        res[i]=a[i];
+    /* 1. Complemento a 1 (inversão de bits) */
+    for (int i = 0; i < NUM_BYTES; i++) {
+        res[i] = ~a[i];
     }
-    for (int i=0; i<(NUM_BITS/8); i++)
-    {
-        res[i]=~res[i];
-    }
-    unsigned char vai_um=1;
-    for (int i=0; i<(NUM_BITS/8); i++)
-    {
-        unsigned short soma=res[i]+vai_um;
-        res[i]=soma & 0xFF;
-        vai_um=(soma>>8)&0x01;
-        if(!vai_um) break;
+    
+    /* 2. Soma 1 com propagação do "vai-um" (little-endian) */
+    unsigned char vai_um = 1;
+    for (int i = 0; i < NUM_BYTES; i++) {
+        unsigned short soma = (unsigned short)res[i] + vai_um;
+        res[i] = (unsigned char)(soma & 0xFF); // Armazena o byte resultante.
+        vai_um = (unsigned char)(soma >> 8);    // O novo "vai-um" é o bit 8 da soma.
+        if (!vai_um) break; // Para a propagação assim que o "vai-um" for zero.
     }
 }
 
-
-/* res = a + b */
+/**
+*@brief Realiza a soma de dois BigInts. res = a + b.
+* Usa "vai-um" para propagar o carry entre os bytes (little-endian).
+*@param res: O BigInt de destino (resultado).
+*@param a: O primeiro BigInt (operando).
+*@param b: O segundo BigInt (operando).
+**/
 void big_sum(BigInt res, BigInt a, BigInt b) {
     unsigned int vai_um = 0;
     for (int i = 0; i < NUM_BYTES; i++) {
-        unsigned int soma = a[i] + b[i] + vai_um;
-        res[i] = (unsigned char)(soma & 0xFF);
-        vai_um = soma >> 8;
+        // Soma os bytes atuais e o "vai-um" do byte anterior.
+        unsigned int soma = (unsigned int)a[i] + (unsigned int)b[i] + vai_um;
+        res[i] = (unsigned char)(soma & 0xFF); // Armazena o byte menos significativo da soma.
+        vai_um = soma >> 8;                     // O novo "vai-um" é o bit 8 da soma.
     }
 }
 
-/* res = a - b */
+/**
+*@brief Realiza a subtração de dois BigInts. res = a - b.
+* Implementada como soma do complemento a 2: res = a + (-b).
+*@param res: O BigInt de destino (resultado).
+*@param a: O minuendo (operando).
+*@param b: O subtraendo (operando).
+**/
 void big_sub(BigInt res, BigInt a, BigInt b) {
-    int emprestimo = 0;
-    for (int i = 0; i < NUM_BYTES; i++) {
-        int diferenca = (int)a[i] - (int)b[i] - emprestimo;
-        if (diferenca < 0) {
-            diferenca += 256;
-            emprestimo = 1;
-        } else {
-            emprestimo = 0;
-        }
-        res[i] = (unsigned char)(diferenca & 0xFF);
-    }
+    BigInt negado_b;
+    // 1. Calcula o complemento a 2 do subtraendo: negado_b = -b.
+    big_comp2(negado_b, b);
+    // 2. Realiza a soma: res = a + negado_b.
+    big_sum(res, a, negado_b);
 }
 
-/* res = a * b */
+/**
+*@brief Realiza a multiplicação de dois BigInts, tratando o sinal. res = a * b.
+* Estratégia: Multiplica as magnitudes (unsigned) e ajusta o sinal do resultado no final.
+*@param res: O BigInt de destino (resultado, armazena os 128 bits menos significativos).
+*@param a: O multiplicando (operando).
+*@param b: O multiplicador (operando).
+**/
 void big_mul(BigInt res, BigInt a, BigInt b) {
-    unsigned short temporario[NUM_BYTES * 2] = {0};
+    /* Tratamento de sinal: */
+    int sinal_a = (a[NUM_BYTES - 1] & 0x80) ? 1 : 0;
+    int sinal_b = (b[NUM_BYTES - 1] & 0x80) ? 1 : 0;
+    int resultado_negativo = sinal_a ^ sinal_b;
+
+    BigInt abs_a, abs_b;
+    // Cópia ou negação de 'a' para obter a magnitude.
+    if (sinal_a) big_comp2(abs_a, a); else {
+        for (int i = 0; i < NUM_BYTES; i++) abs_a[i] = a[i];
+    }
+    // Cópia ou negação de 'b' para obter a magnitude.
+    if (sinal_b) big_comp2(abs_b, b); else {
+        for (int i = 0; i < NUM_BYTES; i++) abs_b[i] = b[i];
+    }
+
+    /* 1. Multiplicação sem sinal: array temporário de 256 bits (32 bytes) */
+    unsigned char temp[NUM_BYTES * 2];
+    // Inicializa 'temp' com zero (substitui memset).
+    for (int i = 0; i < NUM_BYTES * 2; i++) temp[i] = 0x00;
 
     for (int i = 0; i < NUM_BYTES; i++) {
         unsigned int vai_um = 0;
         for (int j = 0; j < NUM_BYTES; j++) {
-            unsigned int pos = i + j;
-            unsigned int multiplicacao = temporario[pos] + a[i] * b[j] + vai_um;
-            temporario[pos] = multiplicacao & 0xFF;
-            vai_um = multiplicacao >> 8;
+            unsigned int posicao = i + j;
+            unsigned int multiplicacao = (unsigned int)abs_a[i] * (unsigned int)abs_b[j];
+            unsigned int soma = (unsigned int)temp[posicao] + multiplicacao + vai_um;
+            
+            temp[posicao] = (unsigned char)(soma & 0xFF);
+            vai_um = soma >> 8;
         }
-        temporario[i + NUM_BYTES] = vai_um;
+        // Propaga o "vai-um" restante para o próximo byte.
+        temp[i + NUM_BYTES] = (unsigned char)((unsigned int)temp[i + NUM_BYTES] + vai_um);
     }
 
-    for (int i = 0; i < NUM_BYTES; i++) {
-        res[i] = (unsigned char)temporario[i];
+    /* 2. Aplica o sinal final */
+    BigInt resultado_temp;
+    // Copia os 128 bits LSB do resultado para 'resultado_temp' (substitui memcpy).
+    for (int i = 0; i < NUM_BYTES; i++) resultado_temp[i] = temp[i];
+
+    if (resultado_negativo) {
+        // Se o resultado deve ser negativo, calcula o complemento a 2 final.
+        big_comp2(res, resultado_temp);
+    } else {
+        // Copia o resultado para 'res' (substitui memcpy).
+        for (int i = 0; i < NUM_BYTES; i++) res[i] = resultado_temp[i];
     }
 }
 
-
-/* Operações de Deslocamento */
-
+/**
+*@brief Realiza um deslocamento lógico para a esquerda. res = a << n.
+* O shift left (em little-endian) move os dados para bytes de índice maior e
+* preenche os bytes/bits menos significativos com 0.
+*@param res: O BigInt de destino (resultado).
+*@param a: O BigInt a ser deslocado (operando).
+*@param n: O número de bits para deslocar (deve estar em [0, 127]).
+**/
 void big_shl(BigInt res, BigInt a, int n)
-// deve deslocar o valor de a para a esquerda n bits (n entre 0 e 127)
-//armazenar em res o resultado
 {
-    int n_qtbytes=n/8; // quantos bytes temos que deslocar
-    int n_qtbits=n%8; //quantos bits restantes temos que deslocar 
-    unsigned char sinal;
-    if(a[15] & 0x80)
-    {
-        sinal=0xFF; //negativo
+    if (n == 0) {
+        // Cópia simples se n for 0.
+        if (res != a) {
+            for (int i = 0; i < NUM_BYTES; i++) res[i] = a[i];
+        }
+        return;
     }
-    else
-    {
-        sinal=0x00; //positivo
+    int n_qtbytes = n / 8;
+    int n_qtbits  = n % 8;
+
+    /* 1) Deslocamento por bytes: move os bytes existentes e zera os de entrada. */
+    // Zera os bytes menos significativos que foram deslocados para fora (índice menor).
+    for (int i = 0; i < n_qtbytes && i < NUM_BYTES; i++) {
+        res[i] = 0x00;
     }
-    //pra zerar tudo
-    for (int i=0; i<16; i++)
-    {
-        res[i]=sinal;
+    // Copia os bytes de 'a' para 'res' (deslocamento de bytes).
+    for (int i = n_qtbytes; i < NUM_BYTES; i++) {
+        res[i] = a[i - n_qtbytes];
     }
-    for (int i=15; i>=n_qtbytes; i--) //enquanto i for maior ou igual a quantidade de bytes
-    {
-        res[i]=a[i-n_qtbytes]; //movendo apenas os bytes por enqt
-    }
-    if (n_qtbits>0) //se existem bits restantes da divisão de bytes anterior
-    {
-        unsigned char bitsresto=0; //bits restantes. Começa com 0 ja que o primeiro loop nao terá 
-        for (int i=0; i<16; i++)
-        {
-            unsigned char atual=res[i];
-            res[i]= (atual<<n_qtbits) | bitsresto; //move e junta
-            bitsresto=atual>>(8-n_qtbits); //atualiza com os bits que restam e que devem ir pro próximo byte
+
+    /* 2) Deslocamento por bits (propagação de "vai-um", da direita para a esquerda) */
+    if (n_qtbits > 0) {
+        unsigned char carry = 0;
+        // O loop começa do byte de dados mais baixo (n_qtbytes) para propagar o carry.
+        for (int i = n_qtbytes; i < NUM_BYTES; i++) { 
+            // Bits que "vazam" para o próximo byte (o novo carry)
+            unsigned char proximo_carry = (unsigned char)(res[i] >> (8 - n_qtbits));
+            // Shift do byte atual + bits do byte anterior (carry)
+            res[i] = (unsigned char)((res[i] << n_qtbits) | carry);
+            carry = proximo_carry;
         }
     }
 }
 
+/**
+*@brief Realiza um deslocamento lógico para a direita. res = a >> n (lógico).
+* O shift right lógico preenche os bits mais significativos (MSB) com 0.
+*@param res: O BigInt de destino (resultado).
+*@param a: O BigInt a ser deslocado (operando).
+*@param n: O número de bits para deslocar (deve estar em [0, 127]).
+**/
 void big_shr(BigInt res, BigInt a, int n)
 {
-    int n_qtbytes=n/8; // quantos bytes temos que deslocar
-    int n_qtbits=n%8; //quantos bits restantes temos que deslocar 
-    //inicializar com 0
-    for(int i=0; i<16; i++)
-    {
-        res[i]=0;
+    if (n == 0) {
+        // Cópia simples se n for 0.
+        if (res != a) {
+            for (int i = 0; i < NUM_BYTES; i++) res[i] = a[i];
+        }
+        return;
     }
-    for (int i=0; i<16-n_qtbytes; i++)
-    {
-        res[i]=a[i+n_qtbytes];
+    int n_qtbytes = n / 8;
+    int n_qtbits  = n % 8;
+
+    /* 1) Deslocamento por bytes: move os bytes existentes e zera os de entrada. */
+    // Copia os bytes de 'a' para 'res' (deslocamento de bytes).
+    for (int i = 0; i < NUM_BYTES - n_qtbytes; i++) {
+        res[i] = a[i + n_qtbytes];
     }
-    if (n_qtbits>0)
-    {
-        unsigned char bitsresto=0;
-        for (int i=15; i>=0; i--)
-        {
-            unsigned char temporario=res[i];
-            res[i]=(temporario>>n_qtbits) | bitsresto; //desloca p direita "n" bits e "junta" os bits q "vazaram" do outro byte anterior
-            bitsresto=temporario<<(8-n_qtbits); //movimentação p posição certa
+    // Zera os bytes que entraram (mais significativos, índice maior).
+    for (int i = NUM_BYTES - n_qtbytes; i < NUM_BYTES; i++) {
+        res[i] = 0x00;
+    }
+
+    /* 2) Deslocamento por bits (propagação de "vai-um", da esquerda para a direita) */
+    if (n_qtbits > 0) {
+        unsigned char carry = 0;
+        // O loop varre do byte mais significativo (índice 15) para o menos significativo (índice 0).
+        for (int i = NUM_BYTES - 1; i >= 0; i--) {
+            // Bits que "vazam" para o byte anterior (o novo carry)
+            unsigned char proximo_carry = (unsigned char)(res[i] << (8 - n_qtbits));
+            // Shift do byte atual + bits do byte posterior (carry)
+            res[i] = (unsigned char)((res[i] >> n_qtbits) | carry);
+            carry = proximo_carry;
+        }
+    }
+}
+
+/**
+*@brief Realiza um deslocamento aritmético para a direita. res = a >> n (aritmético).
+* O shift right aritmético preserva o sinal, preenchendo o MSB com o bit de sinal.
+*@param res: O BigInt de destino (resultado).
+*@param a: O BigInt a ser deslocado (operando).
+*@param n: O número de bits para deslocar (deve estar em [0, 127]).
+**/
+void big_sar(BigInt res, BigInt a, int n)
+{
+    if (n == 0) {
+        // Cópia simples se n for 0.
+        if (res != a) {
+            for (int i = 0; i < NUM_BYTES; i++) res[i] = a[i];
+        }
+        return;
+    }
+    int n_qtbytes = n / 8;
+    int n_qtbits  = n % 8;
+
+    /* Define o valor de preenchimento (extensão de sinal) */
+    unsigned char preenchimento_sinal = (a[NUM_BYTES - 1] & 0x80) ? 0xFF : 0x00;
+
+    /* 1) Deslocamento por bytes */
+    // Copia os bytes de 'a' para 'res' (deslocamento de bytes).
+    for (int i = 0; i < NUM_BYTES - n_qtbytes; i++) {
+        res[i] = a[i + n_qtbytes];
+    }
+    // Preenche os bytes que entraram (mais significativos) com o bit de sinal.
+    for (int i = NUM_BYTES - n_qtbytes; i < NUM_BYTES; i++) {
+        res[i] = preenchimento_sinal;
+    }
+
+    /* 2) Deslocamento por bits (propagação de "vai-um" com preenchimento de sinal) */
+    if (n_qtbits > 0) {
+        // Carry inicial: bit de sinal deslocado para ser inserido no byte mais significativo.
+        unsigned char carry = (preenchimento_sinal << (8 - n_qtbits)); 
+        
+        for (int i = NUM_BYTES - 1; i >= 0; i--) {
+            // Bits que "vazam" para o byte anterior (o novo carry)
+            unsigned char proximo_carry = (unsigned char)(res[i] << (8 - n_qtbits));
+            // Shift do byte atual + bits do byte posterior (carry/preenchimento)
+            res[i] = (unsigned char)((res[i] >> n_qtbits) | carry);
+            carry = proximo_carry;
         }
     }
 }

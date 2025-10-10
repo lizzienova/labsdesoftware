@@ -1,5 +1,5 @@
-/* Nome: Rafaela Bessa || Matrícula: 2420043 || Turma: 33A */
-/* Nome: Lis Almeida || Matrícula: 2421294 || Turma: 33A */
+/* Nome: Rafaela Bessa || Matrícula: 2420043 || Turma: 3WA */
+/* Nome: Lis Almeida || Matrícula: 2421294 || Turma: 3WA */
 #include <stdio.h>
 #include "bigint.h"
 

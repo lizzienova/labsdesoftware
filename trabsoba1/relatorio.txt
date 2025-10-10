@@ -1,2 +1,58 @@
 /* Nome: Rafaela Bessa || Matrícula: 2420043 || Turma: 33A */
 /* Nome: Lis Almeida || Matrícula: 2421294 || Turma: 33A */
+
+Relatório Trabalho 1 Software Básico
+
+***********************************************************************
+
+Estratégia de Testes:
+
+Para realização do trabalho, usamos a metodologia TDD (Test Driven Design) com o objetivo de testar e analisar os resultados individuais de cada 
+função e garantir que estão funcionando como o esperado. Inicialmente, montamos protótipos lógicos das funções e implementamos no nosso arquivo. 
+Fizemos diversos testes com números negativos e positivos e, ao encontrarmos um erro, colocamos um print no meio da função para ver até que parte 
+ela era eficaz e então realizamos as modificações necessárias refatorando a função.
+
+***********************************************************************
+
+Status e Funcionamento do Código:
+
+Todas as funções da biblioteca BigInt estão implementadas no arquivo bigint.c. O código segue a regra little-endian e usa complemento a 2 para 
+números negativos, como requer o trabalho.
+O que funciona: Todas as operações aritméticas (big_sum, big_mul, etc.) e de deslocamento (shift à esquerda ou direita) estão funcionando. 
+O sistema de testes confirma que o código lida corretamente com números positivos, negativos e com a propagação de carry (“vai-um”) entre 
+os bytes.
+O que não está funcionando: O código final não tem falhas aparentes. Todos os erros que encontramos foram encontrados, resolvidos e validados 
+pelo nosso sistema de teste .
+
+***********************************************************************
+
+Casos de Testes:
+
+Para análise das funções montadas utilizamos de valores positivos, negativos e 0 para garantir o funcionamento da função, além de valor extremo 
+que teria mais chance de gerar erros.
+
+Para a função big_val, usamos números negativos, positivos e o 0 para verificar a extensão e se a função estava considerando devidamente o sinal.
+
+Nas funções de atribuição usamos da mesma técnica, e especificamente na função big_comp2 testamos com números positivos e negativos para garantir 
+que seu complemento a 2 tinha sinal oposto ao valor inserido originalmente.
+
+Nas funções de deslocamento usamos também de números positivos e negativos para garantir o preenchimento correto dos bits.
+
+***********************************************************************
+
+Dificuldades enfrentadas e resolvidas:
+
+Durante o desenvolvimento, cometemos alguns erros de lógica, principalmente por causa da complexidade do little-endian e do complemento a 2. 
+O TDD nos ajudou muito a solucionar os problemas.
+No começo, tivemos alguns erros com o sinal e a multiplicação (big_mul) porque a multiplicação que criamos não sabia lidar com números negativos. 
+Se multiplicávamos um número negativo por um positivo, o resultado dava um número gigante e incorreto, porque o código estava tratando os números 
+como se fossem todos positivos. Corrigimos a função para ela primeiro achar o valor absoluto (magnitude) dos dois números, multiplicar sem se 
+preocupar com o sinal, e só no final aplicar o sinal correto ao resultado (usando o complemento a 2 se necessário).
+
+A função que encontramos maior dificuldade em implementar corretamente foi a big_sar. Ela provavelmente foi a mais complexa de implementar porque 
+tivemos que  lidar ao mesmo tempo com operações em nível de bits, preservação do sinal e a representação little endian usada no BigInt. Diferente 
+das outras funções de deslocamento, o deslocamento aritmético à direita precisa propagar corretamente o bit de sinal para deixar coerente os n
+úmeros positivos e negativos, o que envolve uma combinação cuidadosa de deslocamentos por bytes e bits. Depois de analisarmos cuidadosamente o 
+propósito da função e discutirmos, fomos capazes de chegar em um resultado satisfatório no qual a função funciona de maneira correta.
+
+***********************************************************************

@@ -1,0 +1,11 @@
+abcdefgh
+ijklmnop
+qrstuvwx
+yzabcdef
+12345678
+06 12 40 00 00 00 00 00 (exemplo porque pode ser diferente nessa maquina)
+
+-agora converteria para raw usando ./hex2raw <s1.txt (diz que ao invés de ser o teclado agora é do arquivo que ele lerá)
+-isso gera uma saída no terminal baseada nos valores colocados e daí, escrever ./hex2raw <s1.txt> s1.ascii
+-daí, escrever ./bufbomb<s1.ascii
+-isso foi possível (chamar e executar a função danger) invadindo a pilha, usando mais caracteres do que o possível, mas isso causa segmentation fault 

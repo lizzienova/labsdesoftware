@@ -1,0 +1,9 @@
+#include <stdio.h>
+
+int main(void){
+    unsigned char codigo[]=[0x83, 0xC7, 0x01,
+    0x89, 0xF8
+    0xC9
+    0xC3];
+    return 0;
+}

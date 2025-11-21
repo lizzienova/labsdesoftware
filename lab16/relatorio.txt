@@ -1,0 +1,45 @@
+2)Executando dessa maneira, podemos visualizar os símbolos do código objeto. "U" significa que
+o símbolo não está definido (exemplo: foo tem temp1.o, printf em temp1.o || a em temp2.o)
+"T" significa que o símbolo está em uma seção do código (exemplo: main em temp1.o || foo em temp2.o)
+"D" significa que o símbolo foi inicializado na seção dos dados (exemplo: a em temp1.o || b em temp2.o)
+
+3) Erro declarado:
+
+temp1.c:5:6: error: conflicting types for ‘a’; have ‘char’
+    5 | char a = 1; //D
+      |      ^
+In file included from temp1.c:2:
+temp1.h:1:12: note: previous declaration of ‘a’ with type ‘int’
+    1 | extern int a;
+      |  
+
+Esse erro demonstra que tipos diferentes foram declarados pra mesma variável "a", pois nesse codigo incluimos temp1.h
+que define "a" como int
+Se comentarmos a linha que inclui temp1.h em temp1.c e compilarmos o codigo, não haverá problemas pois haverá apenas uma definição
+para "a"
+
+4) a. O arquivo temp1.c vê int a = 1024; e compila sua função main() sabendo que "a" é um inteiro de 4 bytes.
+      O arquivo temp2.c vê extern char a e compila sua função foo() sabendo que "a" é um caractere de 1 byte.
+      Imagino que seja o ligador que faz a conexão incorreta pois ambos os módulos apontam para a mesma região "a"
+      mas veem seu tamanho de formas diferentes
+      Como a função foo() só enxerga 1 byte, ela sobrescreve apenas o primeiro byte de "a" que em temp1.c foi definido como int
+
+    b. Erro:
+        /usr/bin/ld: temp2.o:(.data+0x0): multiple definition of `a'; temp1.o:(.data+0x0): first defined here
+       Ele informa que existe mais de uma definição para "a" e que a primeira definição foi em temp1.o
+       usando nm temp1.o e nm temp2.o, percebemos que, de fato, "a" está inicializado em ambas as seções de
+       dados dos módulos de código
+    c. Mudando para static, os programas compilam e conseguem ser ligados sem problemas. Isso acontece porque ao
+       definir como static, não há conflito nas seções de dados dos dois arquivos, pois static faz com que a definição
+       seja local e não global, não entrando em conflito com temp1.c que tem "a" como global
+
+       extra: coloquei temp1.h novamente em temp2.c e tentei compilar e dá um erro de definição. Fiz isso pra entender
+       o objetivo de se conectar um .h e entendi que esse .h define que existe um "a" em outro arquivo, impossibilitando
+       que temp2.c tenha ao mesmo tempo "a" declarado como externo/global e como local/estático
+
+5) a. Ocorre um erro de segmentation fault. Isso acontece pois a chamada de b() na realidade espera um símbolo T de corpo da função b
+      vindo de um arquivo/módulo externo. Porém, a função b() não existe em nenhuma biblioteca/.h que estamos usando, apenas uma variável b
+      Por outro lado, em temp2.c, b continua como D pois é um símbolo inicializado na parte de dados de temp2.c sem problemas
+   b. Continuamos a ter um erro de segmentation fault
+      Se esse erro não ocorresse, a main executaria o próximo comando de printf e o resultado seria 1024
+

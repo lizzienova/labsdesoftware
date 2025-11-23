@@ -46,7 +46,7 @@ LOOP:
     cmpl $5, %ebx   #if i=5
     jge FIM
     movl %ebx, %r13d    #r13d=i
-    immull $8, %r13d    #i*8, pra saber em qual temp[i] estamos
+    imull $8, %r13d    #i*8, pra saber em qual temp[i] estamos
     movslq  %r13d, %r13 #estendendo o registrador de int pra 64bits
     addq %r12, %r13     #r13=&temp[i]
     call inv            #como double d ja tava em xmm0 fiz direto | inv é double e minha struct pede float

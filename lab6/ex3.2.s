@@ -36,7 +36,7 @@ andl $1, %eax
 cmpl $0, %eax /* (if 0== valor de %eax) */
 je L3
 addl $1, %ebx
-addq $4, %r12
+addq $1, %r12
 jmp L1
 
 L2:
@@ -58,5 +58,5 @@ movl (%r12), %eax
   call  printf       /* chama a funcao da biblioteca */
 /*************************************************************/
 addl $1, %ebx
-addq $4, %r12
+addq $1, %r12
 jmp L1

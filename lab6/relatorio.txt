@@ -7,6 +7,10 @@ O salto condicional retorna pro início de L1, repetindo o processo até que ebx
 2. Zerei o registrador %eax pra usar ele como acumulador da soma. Retirei o printf já que ele não é mais necessário e coloquei a operação de soma no lugar 
 addl (%r12), %eax   ; sum += *p. Depois o código começa como o anterior
 
+3. O objetivo da modificação proposta no programa em C era exibir apenas os elementos pares de um array de inteiros.
+Pra isso, ao traduzir o código para Assembly, foi necessário implementar uma linha que fizesse esse teste. 
+Em vez de usar a operação de módulo (% 2), que é mais custosa, usei uma operação bit a bit.
 
-3. 
+4. Na terceira modificação, o array foi trocado para um de char. Fiz duas alterações: a aritmética de ponteiros foi modificada,
+trocando addq $4, %r12 por addq $1, %r12 para andar só 1 byte. 
 

@@ -1,1 +1,1 @@
-
+1) Pra conseguir fazer a função tive que isolar os últimos 8 bits usando uma "máscara" e depois fiz z = (x & 0x00FFFFFF) | 0xFF000000; pra poder sobrescrever o byte superior 

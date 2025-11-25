@@ -1,0 +1,15 @@
+1. O programa percorre o array de chars e imprime cada elemento convertendo para ASCII. Na versão do assembly, primeiro são declarados o vetor de bytes e as duas strings
+que o printf usará. Depois do prólogo, o endereço do array é colocado em %r12, e o rótulo L1 funciona como um laço, verifica se o byte atual é zero; se for, vai para L2, onde apenas imprime o \n e segue para a finalização do programa.
+Caso contrário, o byte apontado por %r12 é extendido, passado para o printf como %c e depois %r12 é incrementado para ir pro próximo elemento. 
+
+2. O código original imprimia todos os caracteres enquanto o ponteiro pc não encontrava o byte 0. 
+A modificação aplicada foi:
+    if (*pc != 123 && *pc != 125)
+        printf("%c", *pc);
+exercendo um mecanismo de filtro no loop. Então, a segunda condição só é testada quando a primeira é verdadeira.
+
+3. No Assembly, usei o registrador %ebx para a variável do laço e %eax para armazenar o resultado do quadrado.
+O cálculo do quadrado foi feito com a instrução imull %ebx, %eax, e cada valor foi impresso chamando printf com a string.
+ambém implementei o incremento e o teste de limite do laço em Assembly para percorrer apenas de 1 a 10.
+
+4. 

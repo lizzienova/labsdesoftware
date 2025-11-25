@@ -1,0 +1,5 @@
+1. No inicio do arquivo assembly, são definidos os dados globais: o vetor de inteiros e a string usada pelo printf. Foi definido um prólogo que por enquanto não sei explicar
+mas chamamos de caixa preta. Logo depois, o registrador ebx é zerado, representando a variável i do código C, enquanto r12 recebe o endereço do vetor, 
+funcionando como o ponteiro p. A partir daí, o loop é organizado por L1 e L2. m L1, é feita uma verificação: se ebx já chegou a 4, o programa sai do loop; caso contrário,
+o valor apontado por r12 é movido para eax e enviado para printf. Depois de imprimir, ebx é incrementado em 1 e r12 "anda" 4 bytes para passar pro próximo elemento do vetor.
+O salto condicional 

@@ -1,1 +1,9 @@
-1) Pra conseguir fazer a função tive que isolar os últimos 8 bits usando uma "máscara" e depois fiz z = (x & 0x00FFFFFF) | 0xFF000000; pra poder sobrescrever o byte superior 
+1. Pra conseguir fazer a função tive que isolar os últimos 8 bits usando uma "máscara" e depois fiz z = (x & 0x00FFFFFF) | 0xFF000000; pra poder sobrescrever o byte superior
+2. O objetivo era verificar se a quantidade de bits 1 de um inteiro é ímpar, sem usar %. A solução foi usar a operação XOR, pois XOR de todos os bits resulta 1 se o número de bits 1 for ímpar
+exemplo:
+    Para 0x01010101 → número par de bits 1 → retorna 0
+    Para 0x01030101 → número ímpar → retorna 1
+
+3.a Essa função fica capaz de trocar os dois nibbles, deslocando o nibble baixo pra cima e o nibble alto pra baixo. depois combinando os dois
+3.b
+

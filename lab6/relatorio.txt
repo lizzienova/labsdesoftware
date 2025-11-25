@@ -4,4 +4,9 @@ funcionando como o ponteiro p. A partir daí, o loop é organizado por L1 e L2. 
 o valor apontado por r12 é movido para eax e enviado para printf. Depois de imprimir, ebx é incrementado em 1 e r12 "anda" 4 bytes para passar pro próximo elemento do vetor.
 O salto condicional retorna pro início de L1, repetindo o processo até que ebx chegue a 4. Em L2, há uma outra caixa preta que ainda nao consigo definir
 
-2. 
+2. Zerei o registrador %eax pra usar ele como acumulador da soma. Retirei o printf já que ele não é mais necessário e coloquei a operação de soma no lugar 
+addl (%r12), %eax   ; sum += *p. Depois o código começa como o anterior
+
+
+3. 
+

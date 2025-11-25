@@ -5,5 +5,5 @@ exemplo:
     Para 0x01030101 → número ímpar → retorna 1
 
 3.a Essa função fica capaz de trocar os dois nibbles, deslocando o nibble baixo pra cima e o nibble alto pra baixo. depois combinando os dois
-3.b
+3.b Essa função usa o operador << para mover os bits de x em n posições para a esquerda, depois pego os bits que "saíram" pela esquerda e os coloco de volta pela direita e depois combinei essas duas partes. Mantive sempre 8 bits
 

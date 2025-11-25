@@ -4,11 +4,13 @@
 foo:
     pushq %rbp
     movq %rsp, %rbp
-    subq 16, %rsp
+    subq $32, %rsp
     movq %rbx, -8(%rbp)
+    movq %r12, -16(%rbp)
 
     movl $0, %ebx   #i=0
-    xorps %xmm5, %xmm5
+    movl $0, %eax
+    cvtsi2sd %eax, %xmm5
     movss %xmm0, %xmm6      #salvar lim
 
 loop: 
@@ -30,5 +32,6 @@ loop:
 fim: 
     movsd %xmm5, %xmm0
     movq -8(%rbp), %rbx
+    movq -16(%rbp), %r12
     leave
     ret

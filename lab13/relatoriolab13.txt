@@ -1,0 +1,21 @@
+1.Nesse primeiro exercício, somei 1 ao valor de %edi usando addl, e depois movi esse resultado para %eax, que é o registrador usado para retorno de funções inteiras.
+Depois de escrever o arquivo foo.s, compilei usando gcc -c -o foo.o foo.s para gerar o arquivo objeto. Em seguida, utilizei objdump -d foo.o para visualizar o código de máquina gerado. O objdump exibiu o disassembly mostrando as instruções assembly equivalentes e seus bytes correspondentes,
+confirmando que o código produzido estava correspondendo.
+
+3. Neste exercício, escrevi um programa em C que executa diretamente o código de máquina da função foo(x), gerado no item anterior.
+Pra isso, declarei um array local unsigned char codigo[] contendo os bytes que objdump exibiu.
+Na main, defini o tipo funcp, que é um ponteiro para função que recebe um int e retorna um int.
+Depois, converti o endereço do array codigo para esse tipo também.
+Chamei a função usando (*f)(10) e armazenei o resultado na variável i. Em seguida, imprimi o valor de i para 
+verificar se o código realmente estava sendo executado.
+Sem -Wa,--execstack percebi que meu programa estava sendo abortado.
+
+4. Para chamar a função add, utilizei a instrução call em assembly. Como deu erro, usei jmp como o exercício 6 sugeriu para tentar resolver, mas
+não obtive sucesso
+
+5. Primero declarei a função add no próprio arquivo C, o que permitiu obter seu endereço em tempo de execução.
+O array codigo[] armazena o código de máquina da função foo, incluindo a instrução call, cujo opcode é e8 seguido
+de quatro bytes de deslocamento relativo. Como o deslocamento depende do endereço real de add, o programa calcula essa diferença entre o endereço da função add e 
+o endereço da instrução seguinte ao call. Depois de corrigir a instrução call, o código do array passa 
+a representar corretamente uma função que chama add. Converti então o endereço do array para um ponteiro de função e executei (*f)(10)
+para verificar que a saída estava correta.

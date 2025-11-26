@@ -5,7 +5,7 @@ int foo (int x) {
 */
 
 foo:
-    jmp add
+    call add
     leave
     ret
 

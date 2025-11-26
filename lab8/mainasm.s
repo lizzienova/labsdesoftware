@@ -4,13 +4,12 @@
 
   .text
   .globl main
-  main:
-  /* prologo */
-     pushq %rbp
-     movq  %rsp, %rbp
-     subq  $16, %rsp
-     movq  %rbx, -8(%rbp)
-     movq  %r12, -16(%rbp)
+main:
+  pushq %rbp
+  movq  %rsp, %rbp
+  subq  $16, %rsp
+  movq  %rbx, -8(%rbp)
+  movq  %r12, -16(%rbp)
 
   movl   $0, %ebx 
   movq  $nums, %r12   
@@ -27,21 +26,13 @@ while:
   movl  $0, %eax  
   call printf
 
-  addq   $4, %r12 /* p++ */
+  addq   $4, %r12 
   incl   %ebx
   jmp    fim
 
 fim:
-  movl   $0, %eax /* return 0 */
-
-  /* finalizacao */
-     movq -8(%rbp), %rbx
-     movq -16(%rbp), %r12
-     leave
-     ret
-
-  /* finalizacao */
-     movq -8(%rbp), %rbx
-     movq -16(%rbp), %r12
-     leave
-     ret
+  movl   $0, %eax
+  movq -8(%rbp), %rbx
+  movq -16(%rbp), %r12
+  leave
+  ret

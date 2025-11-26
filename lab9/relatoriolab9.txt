@@ -1,0 +1,20 @@
+1. Primeiro, ajustei a pilha através dos registradores rbp e rsp. Como usei um registrador
+que é calle-saved,  fiz a restauração e preservação dele.
+Em seguida, traduzi diretamente a expressão da função em C.
+Conforme a convenção do sistema, os argumentos chegaram nos registradores %edi, %esi e %edx.
+Copiei o valor de c para %r13d, somei b e depois a, e depois coloquei em %eax que é o registrador
+de retorno. 
+
+2. Comecei criando o registro de ativação e reservei espaço na pilha. Também salvei o registrador callee-saved %r15, já que eu o utilizei dentro da função.
+implementei o caso base verificando se n==0. Se for, retorno 1 diretamente em %eax.
+Se não fosse, copiava n para %r15d, decrementava esse valor e fazia a chamada recursiva fat(n-1).
+Antes da chamada salvei o valor original de %edi no RA, porque a função chamada pode acabar sobrescrevendo.
+Depois da chamada, restaurei %edi e multipliquei o retorno em %eax por n.
+
+3. Primeiro, preparei o RA, e usei registradores callee-saved para armazenar as variáveis locais:
+%r12d para i e %r13d para s, inicializando ambos com zero. Depois converti o for do C para um loop while em assembly.
+A cada iteração, comparei i com n para prosseguir com esse loop. Para acessar a[i], calculei o endereço da forma como
+já fiz anteriormente. Dentro do loop somei a[i] em s e implementei o teste if (a[i] == 0). Quando era 
+escrevi o valor acumulado de s de volta no próprio array e zerei de novo. Depois, incrementei meu i e ao final restaurei os registradores
+que usei.
+

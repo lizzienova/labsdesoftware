@@ -1,0 +1,34 @@
+1.  A organização da struct x na memória segue o alinhamento: 8 bytes para double, 4 para float, 2 para short e 2 bytes 
+finais de padding (preenchimento), pra manter o alinhamento. O programa exibe os valores no formato little-endian no formato:
+0x601040 - 00
+0x601041 - 00
+0x601042 - 00
+0x601043 - 00
+0x601044 - 00
+0x601045 - 00
+0x601046 - 12
+0x601047 - c0
+0x601048 - 00
+0x601049 - 00
+0x60104A - 1c
+0x60104B - 41
+0x60104C - f5
+0x60104D - ff
+0x60104E - PP
+0x60104F - PP
+
+2. Primeiramente, no código assembly, primeiro neguei o valor inteiro usando a instrução neg %edi
+Em seguida, converti o inteiro para double com cvtsi2sd %edi, %xmm1, já que a multiplicação em ponto flutuante requer ambos os operandos em registradores XMM.
+Depois disso, utilizei mulsd %xmm1, %xmm0 para multiplicar o double inicial a pelo valor convertido de -b.
+O resultado permanece em %xmm0 então não precisei fazer movimentação quanto a isso. 
+
+5. 
+T g
+D buff
+U i
+U f
+U strlen
+U strcpy
+U strcat
+U malloc
+Depois de ligar os módulos, a saída impressa por printf será 0.

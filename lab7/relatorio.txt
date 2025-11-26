@@ -12,4 +12,9 @@ exercendo um mecanismo de filtro no loop. Então, a segunda condição só é te
 O cálculo do quadrado foi feito com a instrução imull %ebx, %eax, e cada valor foi impresso chamando printf com a string.
 ambém implementei o incremento e o teste de limite do laço em Assembly para percorrer apenas de 1 a 10.
 
-4. 
+4. No meu código, implementei diretamente a operação de indexação calculando o endereço de cada elemento usando a fórmula:end(a) + i*sizeof(T)
+Primeiro, incializei os registradores que representam as variáveis do código em C, depois implementei o loop comparando
+o registrador de “i” com 4, e saltando para o final quando a condição fosse verdadeira.
+Dentro do loop vacilei nums[i] copiando i para %r13, multiplicando por 4, e somei ao endereço base 
+do array. Assim, carreguei o valor do elemento e somei ao acumulador s.
+Depois de percorrer o loop, coloquei o valor de retorno em eax e chamei printf para imprimir a soma. 

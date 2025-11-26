@@ -1,0 +1,12 @@
+2. Tive um pouco de dificuldade na passagem de s1 mas fazendo uma pesquisa achei s1(%rip)
+como possível solução.
+O array nums, a string de formato e a função filtro foram mantidos como símbolos globais.
+Usei registradores calle-saved que restaurei no meu código. Não consegui compilar meu código mas fazendo uma 
+análise do que foi pedido, vi que a saída seria como a da função em c:
+3
+0
+7
+8
+0
+
+a ideia da tradução então estaria correta. 

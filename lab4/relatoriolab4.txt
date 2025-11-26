@@ -1,0 +1,42 @@
+1. 150 = 0x96
+1111 1111 = FF
+1111 1101 = FD
+Byte 0: FD
+Byte 1: FF
+69 FF FF FF
+
+2.
+l = -32765, k = 32771
+dump de l:
+XX - 03
+XX - 80
+
+dump de k:
+XX - 03
+XX - 80
+
+Nesse caso percebemos que apenas a interpretação dos bits que é diferente, mas ambos armazenam 0x8003
+
+4.
+Programa 1:
+ Tipo de x: signed; tipo de y: signed; valor de x: -1; comparação: -1 < 2; correspondentes
+ Tipo de x: unsigned; tipo de y: unsigned; valor de x: 4294967295; comparação: 4294967295 < 2; não correspondente
+ Tipo de x: signed convertido pra unsigned; tipo de y: unsigned; valor de x: -1 -> 4294967295; comparação: não correspondente
+
+5.
+Duas conversões tem de ser feitas: conversão de signed char para int 
+e conversão de int para unsigned int 
+
+void dump(void *p, int n) {
+    unsigned char *p1 = p;
+    while (n--) {
+        printf("%p - %02x\n", p1, *p1);
+        p1++;
+    }
+}
+
+A saída do dump mostra:
+ff
+ff
+ff
+ff

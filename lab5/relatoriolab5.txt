@@ -1,0 +1,53 @@
+1. 
+cada int tem 4 bytes
+É um array com 2 elementos então serão 8 bytes, em cada [i] terão 4 bytes
+
+cada short tem 2 bytes
+São 6 elementos no total
+a[0][0]
+a[0][1]
+a[0][2]
+a[1][0]
+a[1][1]
+a[1][2]
+
+cada um com 2 bytes de short
+
+dump do programa:
+a[0][0] = 0  00 00
+a[0][1] = 1  01 00
+a[0][2] = 2  02 00
+a[1][0] = 3  03 00
+a[1][1] = 4  04 00
+a[1][2] = 5  05 00
+
+2. 
+saída:
+12 bytes
+esse espaço serve pra fazer alinhamento da struct.
+
+3. 
+saídas:
+a) 12 bytes
+c1, 3 pp, int i, char c
+
+b) 16 bytes
+long l, char c, 7 pp
+
+c) 8 bytes
+int 4, char c1, char c2, 2 pp
+
+d) 24 bytes
+x2, c, 7 pp
+
+e) 3 bytes
+c1, c2, c3
+
+f) 16 bytes
+short s, 2 pp, int i, char c[3], short s, pp
+
+g) 5 bytes
+todos os campos começarão no mesmo endereço por ser union
+
+h) 5 bytes
+todos os campos começarão no mesmo endereço por ser union

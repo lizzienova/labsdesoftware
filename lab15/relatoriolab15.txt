@@ -1,0 +1,6 @@
+As funções foram bem sucedidas, mas tenho que me atentar mais para a conversão de valores float e double.
+A depender do exercício, tive necessidade de salvar valores na pilha ou não, para que seus valores não fossem
+perdidos uma vez que fossem sobrepostos pela função que eu ia chamar. Outras vezes, usar apenas calle-saved seria suficiente.
+Aprendi a função pxor que zera registradores xmm.
+Montar a pilha de maneira correta às vezes ainda é meio confuso, mas basta me atentar e ir fazendo as correções enquanto
+monto meu código.

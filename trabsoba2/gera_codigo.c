@@ -18,11 +18,17 @@ static void escreve_byte(unsigned char code[], int *pos, unsigned char val) {
 
 static char pega_offset(char *var) {
     if (var[0] == 'p') {
-        return -24; // 0xE8
+        int idx = atoi(var+1);
+
+        // por enquanto só p0 existe
+        if (idx == 0) return -24;
+
+        // se quiser tratar p1, p2, p3, pode colocar depois
+        return -24 - idx*4;  // fictício, dependerá do seu prólogo
     }
     else if (var[0] == 'v') {
         int idx = atoi(var + 1);
-        return -20 + (idx * 4);  //cálculo do offset
+        return -20 + (idx * 4);
     }
     return 0;
 }
@@ -37,7 +43,7 @@ static void carrega_operando(unsigned char code[], int *pos, char *operando, uns
         char offset = pega_offset(operando);
         // movl offset(%rbp), %eax (8B 45 offset)
         escreve_byte(code, pos, 0x8B);
-        escreve_byte(code, pos, 0x45 | (reg_code << 3)); // 0x45 (para %eax)
+        escreve_byte(code, pos, 0x45 + (reg_code << 3)); // 0x45 (para %eax)
         escreve_byte(code, pos, offset);
     }
 }
@@ -57,7 +63,6 @@ void gera_codigo(FILE *f, unsigned char code[], funcp *entry) {
 
         if (strcmp(comando, "function") == 0) {
             enderecos_funcoes[cont] = pos;
-            *entry = (funcp)((void*)(code + pos));
             cont++;
 
             // PRÓLOGO
@@ -126,7 +131,7 @@ void gera_codigo(FILE *f, unsigned char code[], funcp *entry) {
                         escreve_byte(code, &pos, 0x05);
                         escreve_int(code, &pos, val);
                     } else { // addl op2(%rbp), %eax
-                        char offset_op2 = obter_offset(op2);
+                        char offset_op2 = pega_offset(op2);
                         // addl offset(%rbp), %eax -> 03 45 offset
                         escreve_byte(code, &pos, 0x03);
                         escreve_byte(code, &pos, 0x45);
@@ -143,7 +148,7 @@ void gera_codigo(FILE *f, unsigned char code[], funcp *entry) {
                         escreve_int(code, &pos, val);
                         
                     } else { // subl op2(%rbp), %eax
-                        char offset_op2 = obter_offset(op2);
+                        char offset_op2 = pega_offset(op2);
                         
                         // subl offset(%rbp), %eax -> 2b 45 offset
                         escreve_byte(code, &pos, 0x2b);
@@ -151,16 +156,31 @@ void gera_codigo(FILE *f, unsigned char code[], funcp *entry) {
                         escreve_byte(code, &pos, offset_op2);
                     }
                 }
-                // Aqui você adicionaria else if (strcmp(op, "-") == 0) { ... }
-                // Aqui você adicionaria else if (strcmp(op, "*") == 0) { ... }
-                
+                else if (strcmp(op, "*") == 0) {   //MULTIPLICACAO
+                    // multiplicação usa imull
+                    if (op2[0] == '$') {
+                        int val = atoi(op2 + 1);
+
+                        // imull $val, %eax → 69 c0 val
+                        escreve_byte(code, &pos, 0x69);
+                        escreve_byte(code, &pos, 0xC0);
+                        escreve_int(code, &pos, val);
+                    }
+                    else {
+                        char off2 = pega_offset(op2);
+
+                        // imull off(%rbp), %eax → 0F AF 45 off
+                        escreve_byte(code, &pos, 0x0F);
+                        escreve_byte(code, &pos, 0xAF);
+                        escreve_byte(code, &pos, 0x45);
+                        escreve_byte(code, &pos, off2);
+                    }
+                }
                 // 3. SALVAR RESULTADO de %eax em vX
                 // movl %eax, dest(%rbp) -> 89 45 offset
                 escreve_byte(code, &pos, 0x89);
                 escreve_byte(code, &pos, 0x45);
                 escreve_byte(code, &pos, offset_dest);
-            }
-            }
             }
             else if (sscanf(linha, "v%d = call %s %s", &idx_dest, op1, op2) == 3) {
                 // fazer call
@@ -192,7 +212,11 @@ void gera_codigo(FILE *f, unsigned char code[], funcp *entry) {
                 }
             }
         }
-        
         // fazer zret
     }
+    if (cont > 0) {
+        *entry = (funcp)((void*)(code + enderecos_funcoes[cont - 1]));
+        } else {
+        *entry = NULL;
+        }
 }

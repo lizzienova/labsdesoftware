@@ -1,8 +1,9 @@
-/* Rafaela Bessa 2420043 3WA */
-/* Lis de Almeida Matricula 3WA */
+/* Nome: Rafaela Bessa || Matrícula: 2420043 || Turma: 3WA */
+/* Nome: Lis Almeida || Matrícula: 2421294 || Turma: 3WA */
 
 Relatório do Segundo Trabalho de Software Básico - Gerador de Código
-====================================================================
+===================================================================================================================================================
+
 
 1. Breve Explicação do Funcionamento
 A função `gera_codigo` foi implementada para traduzir instruções da linguagem LBS para código de máquina x86-64 (Intel 64-bit). 
@@ -100,7 +101,7 @@ Durante o desenvolvimento, as principais dificuldades técnicas foram:
 
     b. Cálculo de Salto para 'zret'
         - Problema: A instrução `zret` requer um salto condicional (`jne`) para pular o código de retorno caso a condição seja falsa. Como o 
-        tamanho do código de retorno não é fixo (depende do operando), não se sabia a distância do salto a priori.
+        tamanho do código de retorno não é fixo (depende do operando), não se sabia a distância do salto a proncípio.
         - Solução: Implementação de lógica de correção posterior. O código grava um offset 0 temporário, gera o código de retorno, calcula o 
         tamanho gerado e volta na posição do salto para escrever o offset correto.
 

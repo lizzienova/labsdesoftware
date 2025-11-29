@@ -6,15 +6,15 @@ Relatório do Segundo Trabalho de Software Básico - Gerador de Código
 
 
 1. Breve Explicação do Funcionamento
-A função `gera_codigo` foi implementada para traduzir instruções da linguagem LBS para código de máquina x86-64 (Intel 64-bit). 
-O processo ocorre em passagem única (single-pass) sobre o arquivo de entrada:
+A função gera_codigo foi implementada pra traduzir instruções da linguagem LBS para código de máquina x86-64 (Intel 64-bit). 
+O processo ocorre em passagem única sobre o arquivo de entrada:
 
-    a.  **Leitura e Parsing:** O código lê o arquivo linha a linha, identificando o comando (function, ret, zret, atribuições, 
-    aritmética) e os operandos envolvidos.
+    a. Leitura e Parsing: O código lê o arquivo linha a linha, identificando o comando (function, ret, zret, atribuições, 
+    aritmética) e os possíveis operandos.
 
-    b.  Mapeamento de Memória: Implementou-se um Registro de Ativação (Stack Frame) padrão. No prólogo de cada função, aloca-se 
-    32 bytes na pilha (`sub $32, %rsp`) para acomodar até 5 variáveis locais e garantir o alinhamento. O parâmetro de entrada (`p0`), 
-    recebido no registrador `%edi` (convenção C/Linux), é imediatamente salvo na pilha para acesso uniforme.
+    b. Mapeamento de Memória: Implementamos um Registro de Ativação (Stack Frame) padrão. No prólogo de cada função, alocamos
+    32 bytes na pilha (`sub $32, %rsp`) pra acomodar até 5 variáveis locais e garantir o alinhamento. O parâmetro de entrada (`p0`), 
+    recebido no registrador `%edi` de acordo com a convenção do trabalho é imediatamente salvo na pilha para acesso uniforme.
 
     c.  Geração de Binário: Utiliza-se funções auxiliares para escrever os opcodes e operandos diretamente num vetor de bytes 
     (`unsigned char code[]`).
@@ -41,7 +41,7 @@ Funcionalidades operacionais:
         - Retorno condicional (`zret`) usando `cmp` e `jne`.
         - Chamada de função (`call`) com passagem de parâmetros e cálculo de endereços relativos.
 
-Não foram identificados erros ou funcionalidades pendentes. O código suporta recursão e chamadas aninhadas.
+Não foram identificados erros ou funcionalidades pela metade. O código suporta recursão e chamadas aninhadas.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 

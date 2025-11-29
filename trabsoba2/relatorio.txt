@@ -1,0 +1,109 @@
+/* Rafaela Bessa 2420043 3WA */
+/* Lis de Almeida Matricula 3WA */
+
+Relatório do Segundo Trabalho de Software Básico - Gerador de Código
+====================================================================
+
+1. Breve Explicação do Funcionamento
+A função `gera_codigo` foi implementada para traduzir instruções da linguagem LBS para código de máquina x86-64 (Intel 64-bit). 
+O processo ocorre em passagem única (single-pass) sobre o arquivo de entrada:
+
+    a.  **Leitura e Parsing:** O código lê o arquivo linha a linha, identificando o comando (function, ret, zret, atribuições, 
+    aritmética) e os operandos envolvidos.
+
+    b.  Mapeamento de Memória: Implementou-se um Registro de Ativação (Stack Frame) padrão. No prólogo de cada função, aloca-se 
+    32 bytes na pilha (`sub $32, %rsp`) para acomodar até 5 variáveis locais e garantir o alinhamento. O parâmetro de entrada (`p0`), 
+    recebido no registrador `%edi` (convenção C/Linux), é imediatamente salvo na pilha para acesso uniforme.
+
+    c.  Geração de Binário: Utiliza-se funções auxiliares para escrever os opcodes e operandos diretamente num vetor de bytes 
+    (`unsigned char code[]`).
+
+    d.  Endereçamento: 
+        - Variáveis locais são acessadas via deslocamento negativo em relação ao `%rbp`.
+        - Instruções de desvio (`zret` e `call`) utilizam endereçamento relativo. Para o `zret`, utiliza-se a técnica de "backpatching" 
+        (escreve-se o salto com valor 0 e corrige-se o valor após gerar o código de retorno).
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+2. Status da Implementação
+O gerador de código foi implementado integralmente, cobrindo todas as especificações do enunciado.
+
+Funcionalidades operacionais:
+    a. Estrutura de Função: Prólogo e Epílogo corretos, gerenciamento de pilha e retorno de valores.
+
+    b. Dados: Manipulação correta de constantes (positivas/negativas), variáveis locais (v0-v4) e parâmetro (p0).
+
+    c. Operações: Aritmética completa (+, -, *) e atribuições simples.
+
+    d. Controle de Fluxo: 
+        - Retorno incondicional (`ret`).
+        - Retorno condicional (`zret`) usando `cmp` e `jne`.
+        - Chamada de função (`call`) com passagem de parâmetros e cálculo de endereços relativos.
+
+Não foram identificados erros ou funcionalidades pendentes. O código suporta recursão e chamadas aninhadas.
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+3. Testes Realizados
+Foram executados 10 testes cobrindo diferentes cenários. Para todos os casos abaixo, utilizou-se o parâmetro de entrada p0 = 10.
+
+Teste 1: Retorno Simples (teste1.lbs)
+- Código: ret p0
+- Resultado Esperado: 10 | Obtido: 10 (Sucesso)
+
+Teste 2: Constante Negativa (teste2.lbs)
+- Código: ret $-99
+- Resultado Esperado: -99 | Obtido: -99 (Sucesso)
+
+Teste 3: Aritmética Básica (teste3.lbs)
+- Código: Somas acumuladas em v0 e v1.
+- Resultado Esperado: 50 | Obtido: 50 (Sucesso)
+
+Teste 4: Aritmética Complexa (teste4.lbs)
+- Código: Polinômio 2x^2 - 3x + 5.
+- Resultado Esperado: 175 | Obtido: 175 (Sucesso)
+
+Teste 5: Condicional ZRET - Caso Falso (teste5.lbs)
+- Código: zret p0 (ignora pois 10 != 0) -> ret $1.
+- Resultado Esperado: 1 | Obtido: 1 (Sucesso)
+
+Teste 6: Condicional e Subtração (teste6.lbs)
+- Código: Cópia de variável e subtração simples.
+- Resultado Esperado: 9 | Obtido: 9 (Sucesso)
+
+Teste 7: Uso de Variáveis Locais (teste7.lbs)
+- Código: Uso simultâneo de v0 a v4.
+- Resultado Esperado: 15 | Obtido: 15 (Sucesso)
+
+Teste 8: Chamada de Função (teste8.lbs)
+- Código: Função auxiliar dobra o valor, principal soma 1.
+- Resultado Esperado: 21 | Obtido: 21 (Sucesso)
+
+Teste 9: Recursão (teste9.lbs)
+- Código: Soma recursiva de 1 até 10.
+- Resultado Esperado: 55 | Obtido: 55 (Sucesso)
+
+Teste 10: Chamadas Aninhadas (teste10.lbs)
+- Código: Função chama auxiliar, que chama outra auxiliar (quadrado do quadrado).
+- Resultado Esperado: 10000 | Obtido: 10000 (Sucesso)
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+4. Dificuldades Encontradas e Soluções
+Durante o desenvolvimento, as principais dificuldades técnicas foram:
+
+    a. Passagem de Parâmetro (p0)
+        - Problema: Inicialmente, o código falhava ao tentar ler `p0` da pilha, retornando lixo de memória, pois na arquitetura x64 o 
+        primeiro argumento é passado via registrador (`%edi`) e não empilhado automaticamente.
+        - Solução: Adição de uma instrução `mov %edi, -24(%rbp)` no prólogo da função para salvar explicitamente o argumento na área de 
+        memória reservada.
+
+    b. Cálculo de Salto para 'zret'
+        - Problema: A instrução `zret` requer um salto condicional (`jne`) para pular o código de retorno caso a condição seja falsa. Como o 
+        tamanho do código de retorno não é fixo (depende do operando), não se sabia a distância do salto a priori.
+        - Solução: Implementação de lógica de correção posterior. O código grava um offset 0 temporário, gera o código de retorno, calcula o 
+        tamanho gerado e volta na posição do salto para escrever o offset correto.
+
+    c. Execução de Código em Pilha
+        - Problema: O sistema operacional impedia a execução do vetor de código gerado (Segmentation Fault) devido a proteções de memória (NX bit).
+        - Solução: Compilação utilizando a flag `-Wa,--execstack` no GCC para permitir a execução de instruções na área de dados do programa.

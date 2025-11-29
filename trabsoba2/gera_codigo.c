@@ -1,3 +1,6 @@
+/* Rafaela Bessa 2420043 3WA */
+/* Lis de Almeida Matricula 3WA */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
